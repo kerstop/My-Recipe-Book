@@ -45,7 +45,7 @@ const RecipeDisplay: React.FC<{ recipeBook: RecipeBook }> = ({
       <br />
       <div>{`Added on: ${addedOn}`}</div>
       <dialog ref={editDialog}>
-        <EditRecipeForm recipe={recipe} onSubmit={editDialogHandler} />
+        <EditRecipeForm recipeToEdit={recipe} onSubmit={editDialogHandler} />
       </dialog>
     </div>
   );
