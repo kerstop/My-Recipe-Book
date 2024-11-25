@@ -1,28 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import RecipeDisplay from "./pages/recipe";
-import RecipeBookPage from "./pages/recipe-book";
-import { Recipe } from "./recipe-book";
+import {
+  BrowserRouter,
+  createBrowserRouter,
+  Route,
+  RouterProvider,
+  Routes,
+} from "react-router";
+import RecipeDisplay from "./components/recipe";
+import RecipeBookDisplay from "./components/recipe-book";
+import { Recipe, RecipeBook } from "./recipe-book";
+import "./main.css";
 
-const recipe: Recipe = {
-  title: "owl",
-  instructions: "make the rest of the owl",
-  ingredients: [{ name: "owl meat", unit: "lb", amount: 1 }],
-  added_on: new Date(),
+const defaultBook: RecipeBook = {
+  recipes: [
+    {
+      title: "owl",
+      instructions: "make the rest of the owl",
+      ingredients: [{ name: "owl meat", unit: "lb", amount: 1 }],
+      lastModified: new Date(),
+    },
+  ],
 };
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <RecipeBookPage book={{ recipes: [recipe] }} />,
-  },
-  { path: "recipe", element: <RecipeDisplay recipe={recipe}></RecipeDisplay> },
-]);
+const HomePage: React.FC = () => {
+  const [book, setBook] = useState(defaultBook);
+
+  const routes = (
+    <Routes>
+      <Route path="/" element={<RecipeBookDisplay recipeBook={book} />} />
+      <Route
+        path="/recipes/:recipeName"
+        element={<RecipeDisplay recipeBook={book} />}
+      />
+    </Routes>
+  );
+  return <BrowserRouter>{routes}</BrowserRouter>;
+};
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <HomePage />
   </React.StrictMode>,
 );

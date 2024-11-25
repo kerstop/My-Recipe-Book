@@ -6,11 +6,11 @@ export interface Recipe {
   title: string;
   ingredients: Ingredient[];
   instructions: string;
-  added_on: Date;
+  lastModified: Date;
 }
 
 export interface Ingredient {
   name: string;
-  unit?: string;
+  unit: string | null;
   amount: number;
 }
