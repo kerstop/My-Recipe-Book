@@ -1,20 +1,14 @@
 import React, { useRef } from "react";
 import { Recipe, RecipeBook } from "../recipe-book";
-import { useParams } from "react-router";
-import EditRecipeForm from "./edit-recipe";
+import { useNavigate, useParams } from "react-router";
+import EditRecipe from "./edit-recipe";
 
 const RecipeDisplay: React.FC<{ recipeBook: RecipeBook }> = ({
   recipeBook,
 }) => {
   const { recipeName } = useParams();
-  const editDialog = useRef<HTMLDialogElement | null>(null);
 
-  const showEditDialog = () => {
-    editDialog.current?.showModal();
-  };
-  const editDialogHandler = (newRecipe: Recipe) => {
-    console.log(newRecipe);
-  };
+  const navigate = useNavigate();
 
   if (recipeName === undefined) {
     return <div>No Recipe Selected</div>;
@@ -26,27 +20,29 @@ const RecipeDisplay: React.FC<{ recipeBook: RecipeBook }> = ({
     return <div>Recipe Not Found</div>;
   }
 
-  const { title, ingredients, instructions, lastModified: addedOn } = recipe;
-
   return (
     <div>
-      <input type="button" value={"edit"} onClick={showEditDialog} />
-      <h1>{title}</h1>
+      <input
+        type="button"
+        value={"edit"}
+        onClick={() => {
+          navigate(`/recipes/${recipeName}/edit`);
+        }}
+      />
+      <h1>{recipe.title}</h1>
       <h2>Ingredients</h2>
       <ul>
-        {ingredients.map((ingredient, i) => (
-          <li key={i}>
+        {recipe.ingredients.map((ingredient) => (
+          <li key={ingredient.orderBy}>
             {ingredient.amount} {ingredient.unit} {ingredient.name}
           </li>
         ))}
       </ul>
       <h2>Instructions</h2>
-      <div>{instructions}</div>
+      <div>{recipe.instructions}</div>
       <br />
-      <div>{`Added on: ${addedOn}`}</div>
-      <dialog ref={editDialog}>
-        <EditRecipeForm recipeToEdit={recipe} onSubmit={editDialogHandler} />
-      </dialog>
+      <div>{`Added on: ${recipe.lastModified}`}</div>
+      <div>{`uuid: ${recipe.id}`}</div>
     </div>
   );
 };

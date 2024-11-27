@@ -3,8 +3,9 @@ export interface RecipeBook {
 }
 
 export interface Recipe {
+  id: string;
   title: string;
-  ingredients: Ingredient[];
+  ingredients: IngredientList;
   instructions: string;
   lastModified: Date;
 }
@@ -14,3 +15,5 @@ export interface Ingredient {
   unit: string | null;
   amount: number;
 }
+
+export type IngredientList = (Ingredient & { orderBy: number })[];

@@ -1,5 +1,7 @@
 import { useRef, useState } from "react";
-import { Ingredient, Recipe } from "../recipe-book";
+import { Ingredient, IngredientList, Recipe, RecipeBook } from "../recipe-book";
+import { max } from "lodash";
+import { useNavigate, useParams } from "react-router";
 
 const EditIngredient: React.FC<{
   ingredient: Ingredient;
@@ -39,23 +41,41 @@ const EditIngredient: React.FC<{
   );
 };
 
-const EditRecipeForm: React.FC<{
-  recipeToEdit?: Recipe;
-  onSubmit: (newRecipe: Recipe) => void;
-}> = ({ recipeToEdit, onSubmit }) => {
-  const [recipe, setRecipe] = useState<Recipe>(
-    recipeToEdit ?? {
-      title: "",
-      ingredients: [],
-      instructions: "",
-      lastModified: new Date(),
-    },
+const EditRecipe: React.FC<{
+  recipeBook: RecipeBook;
+  setRecipeBook: (RecipeBook: RecipeBook) => void;
+}> = ({ recipeBook, setRecipeBook }) => {
+  const { recipeName } = useParams();
+
+  const navigate = useNavigate();
+
+  if (recipeName === undefined) {
+    return <div>No Recipe Selected</div>;
+  }
+
+  const [recipe, setRecipe] = useState(
+    recipeBook.recipes.find((r) => r.title === recipeName),
   );
+
+  if (recipe === undefined) {
+    return <div>Recipe Not Found</div>;
+  }
+
   return (
     <form
       method="dialog"
       onSubmit={(e) => {
-        onSubmit({ ...recipe, lastModified: new Date() });
+        let recipeToUpdate = recipeBook.recipes.findIndex(
+          (r) => r.id === recipe.id,
+        );
+        if (recipeToUpdate === -1) {
+          recipeBook.recipes.push(recipe);
+        } else {
+          recipeBook.recipes[recipeToUpdate] = recipe;
+        }
+        setRecipeBook({ ...recipeBook });
+        console.log(recipeBook.recipes);
+        navigate(`/recipes/${recipe.title}`);
       }}
     >
       <label>
@@ -68,15 +88,42 @@ const EditRecipeForm: React.FC<{
         />
       </label>
       <ul>
-        {recipe.ingredients.map((ingredient) => {
+        {recipe.ingredients.map((ingredient, i) => {
           return (
             <EditIngredient
-              setIngredient={(ingredient) => {}}
+              setIngredient={(updatedIngredient) => {
+                let updatedIngredientList = [...recipe.ingredients];
+                updatedIngredientList[i] = {
+                  ...updatedIngredient,
+                  orderBy: ingredient.orderBy,
+                };
+                setRecipe({ ...recipe, ingredients: updatedIngredientList });
+              }}
               ingredient={ingredient}
+              key={ingredient.orderBy}
             />
           );
         })}
       </ul>
+      <input
+        type="button"
+        value={"+"}
+        onClick={() => {
+          setRecipe({
+            ...recipe,
+            ingredients: [
+              ...recipe.ingredients,
+              {
+                name: "",
+                unit: "",
+                amount: 1,
+                orderBy:
+                  (max(recipe.ingredients.map((i) => i.orderBy)) ?? 0) + 1,
+              },
+            ],
+          });
+        }}
+      />
       <label>
         Instructions
         <br />
@@ -94,4 +141,4 @@ const EditRecipeForm: React.FC<{
   );
 };
 
-export default EditRecipeForm;
+export default EditRecipe;
