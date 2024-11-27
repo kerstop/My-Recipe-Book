@@ -1,18 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
-import {
-  BrowserRouter,
-  createBrowserRouter,
-  Route,
-  RouterProvider,
-  Routes,
-} from "react-router";
 import RecipeDisplay from "./components/recipe";
 import RecipeBookDisplay from "./components/recipe-book";
 import { Recipe, RecipeBook } from "./recipe-book";
 import "./main.css";
 import EditRecipe from "./components/edit-recipe";
+import GlobalState from "./context";
 
 const defaultBook: RecipeBook = {
   recipes: [
@@ -26,27 +19,43 @@ const defaultBook: RecipeBook = {
   ],
 };
 
-const HomePage: React.FC = () => {
-  const [book, setBook] = useState(defaultBook);
+const Body: React.FC = () => {
+  const { recipeId, editing } = useContext(GlobalState);
+  if (recipeId !== null) {
+    if (editing) {
+      return <EditRecipe />;
+    } else {
+      return <RecipeDisplay />;
+    }
+  } else {
+    return <RecipeBookDisplay />;
+  }
+};
 
-  const routes = (
-    <Routes>
-      <Route path="/" element={<RecipeBookDisplay recipeBook={book} />} />
-      <Route
-        path="/recipes/:recipeName"
-        element={<RecipeDisplay recipeBook={book} />}
+const RootNode: React.FC = () => {
+  const [book, setBook] = useState(defaultBook);
+  const [recipeId, setRecipeId] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
+
+  return (
+    <GlobalState.Provider
+      value={{ book, setBook, recipeId, setRecipeId, editing, setEditing }}
+    >
+      <input
+        type="button"
+        value="Home"
+        onClick={() => {
+          setRecipeId(null);
+        }}
       />
-      <Route
-        path="/recipes/:recipeName/edit"
-        element={<EditRecipe recipeBook={book} setRecipeBook={setBook} />}
-      />
-    </Routes>
+      <hr />
+      <Body />
+    </GlobalState.Provider>
   );
-  return <BrowserRouter>{routes}</BrowserRouter>;
 };
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <HomePage />
+    <RootNode />
   </React.StrictMode>,
 );

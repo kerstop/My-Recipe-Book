@@ -1,7 +1,8 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { Ingredient, IngredientList, Recipe, RecipeBook } from "../recipe-book";
 import { max } from "lodash";
 import { useNavigate, useParams } from "react-router";
+import GlobalState from "../context";
 
 const EditIngredient: React.FC<{
   ingredient: Ingredient;
@@ -41,20 +42,10 @@ const EditIngredient: React.FC<{
   );
 };
 
-const EditRecipe: React.FC<{
-  recipeBook: RecipeBook;
-  setRecipeBook: (RecipeBook: RecipeBook) => void;
-}> = ({ recipeBook, setRecipeBook }) => {
-  const { recipeName } = useParams();
-
-  const navigate = useNavigate();
-
-  if (recipeName === undefined) {
-    return <div>No Recipe Selected</div>;
-  }
-
+const EditRecipe: React.FC = () => {
+  const { book, recipeId, setBook, setEditing } = useContext(GlobalState);
   const [recipe, setRecipe] = useState(
-    recipeBook.recipes.find((r) => r.title === recipeName),
+    book.recipes.find((r) => r.id === recipeId),
   );
 
   if (recipe === undefined) {
@@ -65,17 +56,15 @@ const EditRecipe: React.FC<{
     <form
       method="dialog"
       onSubmit={(e) => {
-        let recipeToUpdate = recipeBook.recipes.findIndex(
-          (r) => r.id === recipe.id,
-        );
+        let recipeToUpdate = book.recipes.findIndex((r) => r.id === recipe.id);
         if (recipeToUpdate === -1) {
-          recipeBook.recipes.push(recipe);
+          book.recipes.push(recipe);
         } else {
-          recipeBook.recipes[recipeToUpdate] = recipe;
+          book.recipes[recipeToUpdate] = recipe;
         }
-        setRecipeBook({ ...recipeBook });
-        console.log(recipeBook.recipes);
-        navigate(`/recipes/${recipe.title}`);
+        setBook({ ...book });
+        console.log(book.recipes);
+        setEditing(false);
       }}
     >
       <label>

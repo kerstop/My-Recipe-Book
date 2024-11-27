@@ -1,21 +1,12 @@
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import { Recipe, RecipeBook } from "../recipe-book";
 import { useNavigate, useParams } from "react-router";
 import EditRecipe from "./edit-recipe";
+import GlobalState from "../context";
 
-const RecipeDisplay: React.FC<{ recipeBook: RecipeBook }> = ({
-  recipeBook,
-}) => {
-  const { recipeName } = useParams();
-
-  const navigate = useNavigate();
-
-  if (recipeName === undefined) {
-    return <div>No Recipe Selected</div>;
-  }
-  const recipe = recipeBook.recipes.find(
-    (recipe) => recipe.title === recipeName,
-  );
+const RecipeDisplay: React.FC = () => {
+  const { book, recipeId, setEditing } = useContext(GlobalState);
+  const recipe = book.recipes.find((recipe) => recipe.id === recipeId);
   if (recipe === undefined) {
     return <div>Recipe Not Found</div>;
   }
@@ -26,7 +17,7 @@ const RecipeDisplay: React.FC<{ recipeBook: RecipeBook }> = ({
         type="button"
         value={"edit"}
         onClick={() => {
-          navigate(`/recipes/${recipeName}/edit`);
+          setEditing(true);
         }}
       />
       <h1>{recipe.title}</h1>
