@@ -27,3 +27,11 @@ a:hover {
   text-decoration: underline;
   cursor: pointer;
 }
+
+.ingredient-amount-input {
+  width: 6ch;
+}
+
+.ingredient-name-input {
+  width: 40ch;
+}

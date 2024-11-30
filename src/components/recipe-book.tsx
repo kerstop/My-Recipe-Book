@@ -4,7 +4,7 @@ import { NavLink } from "react-router";
 import GlobalState from "../context";
 
 const RecipeBookPage: React.FC = () => {
-  const { book, setRecipeId } = useContext(GlobalState);
+  const { book, setRecipeId, setEditing } = useContext(GlobalState);
   return (
     <>
       <h1>Recipes</h1>
@@ -14,6 +14,7 @@ const RecipeBookPage: React.FC = () => {
             <a
               onClick={() => {
                 setRecipeId(recipe.id);
+                setEditing(false);
               }}
             >
               {recipe.title}
@@ -21,6 +22,7 @@ const RecipeBookPage: React.FC = () => {
           </li>
         ))}
       </ul>
+      <input type="button" defaultValue="Create New" />
     </>
   );
 };

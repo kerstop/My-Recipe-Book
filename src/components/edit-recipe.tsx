@@ -23,6 +23,7 @@ const EditIngredient: React.FC<{
   return (
     <li>
       <input
+        className="ingredient-amount-input"
         type="number"
         autoComplete="off"
         defaultValue={ingredient.amount}
@@ -30,9 +31,12 @@ const EditIngredient: React.FC<{
         onChange={onChange}
       />
       <select ref={unitRef} onChange={onChange}>
-        <option value=""></option>
+        <option selected={ingredient.unit === ""}></option>
+        <option selected={ingredient.unit === "lb"}>lb</option>
+        <option selected={ingredient.unit === "cup"}>cup</option>
       </select>
       <input
+        className="ingredient-name-input"
         autoComplete="off"
         defaultValue={ingredient.name}
         ref={nameRef}
@@ -68,7 +72,7 @@ const EditRecipe: React.FC = () => {
       }}
     >
       <label>
-        Title
+        {"Title "}
         <input
           name="title"
           autoComplete="off"
