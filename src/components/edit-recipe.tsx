@@ -1,7 +1,6 @@
 import { useContext, useRef, useState } from "react";
-import { Ingredient, IngredientList, Recipe, RecipeBook } from "../recipe-book";
+import { Ingredient } from "../recipe-book";
 import { max } from "lodash";
-import { useNavigate, useParams } from "react-router";
 import GlobalState from "../context";
 
 const EditIngredient: React.FC<{
@@ -59,7 +58,7 @@ const EditRecipe: React.FC = () => {
   return (
     <form
       method="dialog"
-      onSubmit={(e) => {
+      onSubmit={() => {
         let recipeToUpdate = book.recipes.findIndex((r) => r.id === recipe.id);
         if (recipeToUpdate === -1) {
           book.recipes.push(recipe);

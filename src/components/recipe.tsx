@@ -1,7 +1,4 @@
-import React, { useContext, useRef } from "react";
-import { Recipe, RecipeBook } from "../recipe-book";
-import { useNavigate, useParams } from "react-router";
-import EditRecipe from "./edit-recipe";
+import React, { useContext } from "react";
 import GlobalState from "../context";
 
 const RecipeDisplay: React.FC = () => {

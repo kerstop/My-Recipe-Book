@@ -1,6 +1,4 @@
 import React, { useContext } from "react";
-import { RecipeBook } from "../recipe-book";
-import { NavLink } from "react-router";
 import GlobalState from "../context";
 
 const RecipeBookPage: React.FC = () => {
