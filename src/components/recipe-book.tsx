@@ -30,7 +30,15 @@ const RecipeBookPage: React.FC = () => {
             {
               id: newId,
               title: "New Recipe",
-              ingredients: [{ orderBy: 1, name: "", unit: "", amount: 1 }],
+              ingredients: [
+                {
+                  id: window.crypto.randomUUID(),
+                  orderBy: 0,
+                  name: "",
+                  unit: "",
+                  amount: 1,
+                },
+              ],
               instructions: "",
               lastModified: new Date(),
             },

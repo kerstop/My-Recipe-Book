@@ -11,6 +11,7 @@ export interface Recipe {
 }
 
 export interface Ingredient {
+  id: string;
   name: string;
   unit: string | null;
   amount: number;

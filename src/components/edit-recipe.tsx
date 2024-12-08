@@ -6,13 +6,15 @@ import GlobalState from "../context";
 const EditIngredient: React.FC<{
   ingredient: Ingredient;
   setIngredient: (ingredient: Ingredient) => void;
-}> = ({ ingredient, setIngredient }) => {
+  removeIngredient: () => void;
+}> = ({ ingredient, setIngredient, removeIngredient }) => {
   const amountRef = useRef<HTMLInputElement | null>(null);
   const unitRef = useRef<HTMLSelectElement | null>(null);
   const nameRef = useRef<HTMLInputElement | null>(null);
   const onChange = () => {
     if (amountRef.current && unitRef.current && nameRef.current) {
       setIngredient({
+        id: ingredient.id,
         amount: amountRef.current.valueAsNumber,
         unit: unitRef.current.value,
         name: nameRef.current.value,
@@ -41,6 +43,7 @@ const EditIngredient: React.FC<{
         ref={nameRef}
         onChange={onChange}
       />
+      <input type="button" defaultValue="-" onClick={removeIngredient} />
     </li>
   );
 };
@@ -56,20 +59,7 @@ const EditRecipe: React.FC = () => {
   }
 
   return (
-    <form
-      method="dialog"
-      onSubmit={() => {
-        let recipeToUpdate = book.recipes.findIndex((r) => r.id === recipe.id);
-        if (recipeToUpdate === -1) {
-          book.recipes.push(recipe);
-        } else {
-          book.recipes[recipeToUpdate] = recipe;
-        }
-        setBook({ ...book });
-        console.log(book.recipes);
-        setEditing(false);
-      }}
-    >
+    <form action="none">
       <label>
         {"Title "}
         <input
@@ -91,8 +81,19 @@ const EditRecipe: React.FC = () => {
                 };
                 setRecipe({ ...recipe, ingredients: updatedIngredientList });
               }}
+              removeIngredient={() => {
+                let updatedIngredientList = [
+                  ...recipe.ingredients.slice(0, i),
+                  ...recipe.ingredients.slice(i + 1),
+                ];
+                updatedIngredientList.sort((a, b) => a.orderBy - b.orderBy);
+                updatedIngredientList.forEach(
+                  (ingredient, i) => (ingredient.orderBy = i),
+                );
+                setRecipe({ ...recipe, ingredients: updatedIngredientList });
+              }}
               ingredient={ingredient}
-              key={ingredient.orderBy}
+              key={ingredient.id}
             />
           );
         })}
@@ -106,6 +107,7 @@ const EditRecipe: React.FC = () => {
             ingredients: [
               ...recipe.ingredients,
               {
+                id: window.crypto.randomUUID(),
                 name: "",
                 unit: "",
                 amount: 1,
@@ -128,7 +130,28 @@ const EditRecipe: React.FC = () => {
           }
         />
       </label>
-      <input type="submit" />
+      <input
+        type="button"
+        defaultValue="Save"
+        onClick={() => {
+          let recipeToUpdate = book.recipes.findIndex(
+            (r) => r.id === recipe.id,
+          );
+          if (recipeToUpdate === -1) {
+            book.recipes.push(recipe);
+          } else {
+            book.recipes[recipeToUpdate] = recipe;
+          }
+          setBook({ ...book });
+          console.log(book.recipes);
+          setEditing(false);
+        }}
+      />
+      <input
+        type="button"
+        defaultValue={"Cancel"}
+        onClick={() => setEditing(false)}
+      />
     </form>
   );
 };
