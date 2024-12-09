@@ -1,9 +1,11 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import GlobalState from "../context";
 
 const RecipeDisplay: React.FC = () => {
-  const { book, recipeId, setEditing } = useContext(GlobalState);
+  const { book, setBook, recipeId, setRecipeId, setEditing } =
+    useContext(GlobalState);
   const recipe = book.recipes.find((recipe) => recipe.id === recipeId);
+  const [deleteInitiated, setDeleteInitiated] = useState(false);
   if (recipe === undefined) {
     return <div>Recipe Not Found</div>;
   }
@@ -17,6 +19,26 @@ const RecipeDisplay: React.FC = () => {
           setEditing(true);
         }}
       />
+      <input
+        type="button"
+        value={deleteInitiated ? "Are you sure?" : "Delete"}
+        onClick={(e) => {
+          if (deleteInitiated) {
+            const i = book.recipes.findIndex((r) => r.id === recipeId);
+            setBook({
+              ...book,
+              recipes: [
+                ...book.recipes.slice(0, i),
+                ...book.recipes.slice(i + 1),
+              ],
+            });
+            setRecipeId(null);
+          } else {
+            setDeleteInitiated(true);
+          }
+        }}
+        onMouseLeave={() => setDeleteInitiated(false)}
+      />
       <h1>{recipe.title}</h1>
       <h2>Ingredients</h2>
       <ul>
@@ -27,7 +49,11 @@ const RecipeDisplay: React.FC = () => {
         ))}
       </ul>
       <h2>Instructions</h2>
-      <div>{recipe.instructions}</div>
+      <ol>
+        {recipe.instructions.split("\n").map((step, i) => {
+          return <li key={i}>{step}</li>;
+        })}
+      </ol>
       <br />
       <div>{`Added on: ${recipe.lastModified}`}</div>
       <div>{`uuid: ${recipe.id}`}</div>

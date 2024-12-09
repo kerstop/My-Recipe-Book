@@ -31,10 +31,14 @@ const EditIngredient: React.FC<{
         ref={amountRef}
         onChange={onChange}
       />
-      <select ref={unitRef} onChange={onChange}>
-        <option selected={ingredient.unit === ""}></option>
-        <option selected={ingredient.unit === "lb"}>lb</option>
-        <option selected={ingredient.unit === "cup"}>cup</option>
+      <select
+        ref={unitRef}
+        onChange={onChange}
+        defaultValue={ingredient.unit ?? ""}
+      >
+        <option></option>
+        <option>lb</option>
+        <option>cup</option>
       </select>
       <input
         className="ingredient-name-input"
@@ -59,7 +63,7 @@ const EditRecipe: React.FC = () => {
   }
 
   return (
-    <form action="none">
+    <form action="none" className="recipe-editor">
       <label>
         {"Title "}
         <input

@@ -28,10 +28,46 @@ a:hover {
   cursor: pointer;
 }
 
+hr {
+  clear: both;
+}
+
+.header-right {
+  contain: layout;
+  float: right;
+}
+
+.header-right > p {
+  margin-block: 0px;
+}
+
+.popup {
+  padding: 0.5em;
+  position: absolute;
+  right: 0px;
+  top: 0%;
+  background: white;
+  border: 1px solid black;
+  border-radius: 3px;
+  width: 40ch;
+}
+
 .ingredient-amount-input {
   width: 6ch;
 }
 
 .ingredient-name-input {
-  width: 40ch;
+  width: 60ch;
+}
+
+.recipe-editor textarea {
+  font-family: inherit;
+  min-width: min(60ch, 100%);
+  min-height: 6em;
+  height: 20em;
+}
+
+ol > li {
+  margin-block: 0.75em;
+  width: min(60ch, 100%);
 }

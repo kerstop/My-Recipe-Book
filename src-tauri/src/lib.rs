@@ -1,9 +1,11 @@
 #![feature(os_string_pathbuf_leak)]
 use std::path::{Path, PathBuf};
-use tauri::{Manager, State};
+use std::sync::OnceLock;
+use tauri::Manager;
+
+static DATA_PATH: OnceLock<&'static Path> = OnceLock::new();
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-struct DataPath(&'static Path);
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -16,18 +18,26 @@ pub fn run() {
                 .expect("unable to determine the data directory")
                 .leak();
             println!("Data path identified as {:?}", path);
-            app.manage(DataPath(path));
+            DATA_PATH.set(path).unwrap();
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![load_book])
+        .invoke_handler(tauri::generate_handler![load_book, save_book])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 
 #[tauri::command]
-fn load_book(state: State<'_, DataPath>) -> String {
-    let mut file_to_load = PathBuf::from(state.0);
+fn save_book(book_str: String) {
+    let mut file_to_write = PathBuf::from(DATA_PATH.get().unwrap());
+    file_to_write.push("default.rcpbk");
+
+    std::fs::write(file_to_write, book_str).unwrap();
+}
+
+#[tauri::command]
+fn load_book() -> String {
+    let mut file_to_load = PathBuf::from(DATA_PATH.get().unwrap());
     file_to_load.push("default.rcpbk");
 
     match std::fs::read_to_string(&file_to_load) {
