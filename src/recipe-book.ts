@@ -14,7 +14,7 @@ export interface Ingredient {
   id: string;
   name: string;
   unit: string | null;
-  amount: number;
+  amount: number | null;
 }
 
 export type IngredientList = (Ingredient & { orderBy: number })[];

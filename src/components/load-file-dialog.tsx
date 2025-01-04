@@ -11,7 +11,9 @@ const LoadFileDialog: React.FC<{}> = () => {
 
   useEffect(() => {
     if ("__TAURI_INTERNALS__" in window) {
-      invoke("load_book").then((book) => setBook(JSON.parse(book as string)));
+      invoke("load_book").then((book) => {
+        setBook(JSON.parse(book as string));
+      });
     } else {
       load_file_dialog.current?.showModal();
     }
