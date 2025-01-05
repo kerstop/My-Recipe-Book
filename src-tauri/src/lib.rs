@@ -58,6 +58,7 @@ fn load_book() -> String {
 }
 
 #[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 struct Recipe {
     id: Uuid,
     title: String,
@@ -67,6 +68,7 @@ struct Recipe {
 }
 
 #[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 struct Ingredient {
     id: Uuid,
     name: String,

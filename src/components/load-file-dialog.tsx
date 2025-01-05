@@ -1,6 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import GlobalState from "../context";
 import { invoke } from "@tauri-apps/api/core";
+import { recipeBookValidator } from "../recipe-book";
 
 const LoadFileDialog: React.FC<{}> = () => {
   const { book, setBook } = useContext(GlobalState);
@@ -8,11 +9,20 @@ const LoadFileDialog: React.FC<{}> = () => {
   const [popupOpen, setPopupOpen] = useState(false);
   const load_file_dialog = useRef<HTMLDialogElement>(null);
   const file_input = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState<null | string>(null);
 
   useEffect(() => {
     if ("__TAURI_INTERNALS__" in window) {
       invoke("load_book").then((book) => {
-        setBook(JSON.parse(book as string));
+        const loaded_book = JSON.parse(book as string);
+        if (recipeBookValidator(loaded_book)) {
+          setBook(loaded_book);
+        } else {
+          console.error(
+            "file was not properly formated",
+            recipeBookValidator.errors,
+          );
+        }
       });
     } else {
       load_file_dialog.current?.showModal();
@@ -57,32 +67,35 @@ const LoadFileDialog: React.FC<{}> = () => {
           />
         </div>
       ) : null}
-      <dialog ref={load_file_dialog}>
-        <form
-          method="dialog"
-          onSubmit={async (e) => {
-            const form = e.target as HTMLFormElement;
-            const file_input = form.elements[0] as HTMLInputElement;
-            const file = file_input.files?.[0];
-            if (file !== undefined) {
-              const file_contents = await file.text();
-              setBook(JSON.parse(file_contents));
-              setOpenedFileName(file.name);
-            }
-          }}
-        >
+      <dialog ref={load_file_dialog} onClose={() => setError(null)}>
+        {error !== null ? <p>{`Error: ${error}`}</p> : ""}
+        <form method="dialog">
           <p>Select a recipe book to open</p>
-          <input type="file" name="book" accept=".rcpbk" ref={file_input} />
+          <input
+            type="file"
+            name="book"
+            accept=".rcpbk,.json"
+            ref={file_input}
+          />
           <input
             type="button"
             value={"Load"}
             onClick={async () => {
+              setError(null);
               const file = file_input.current?.files?.[0];
               if (file !== undefined) {
-                const file_contents = await file.text();
-                setBook(JSON.parse(file_contents));
-                setOpenedFileName(file.name);
-                load_file_dialog.current?.close();
+                const file_contents = JSON.parse(await file.text());
+                if (recipeBookValidator(file_contents)) {
+                  setBook(file_contents);
+                  setOpenedFileName(file.name);
+                  load_file_dialog.current?.close();
+                } else {
+                  setError("This file seems to be improperly formated");
+                  console.error(
+                    "recipe book validation errors",
+                    recipeBookValidator.errors,
+                  );
+                }
               }
             }}
           />

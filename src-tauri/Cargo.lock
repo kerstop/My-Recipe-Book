@@ -1655,6 +1655,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "jtd"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "30d9414910f23583a4f3e8941296e561f226f2f31b65843767a79a32bf8cb671"
+dependencies = [
+ "chrono",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
 name = "keyboard-types"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1873,6 +1885,7 @@ name = "my-recipe-book"
 version = "0.1.0"
 dependencies = [
  "chrono",
+ "jtd",
  "reqwest",
  "scraper",
  "serde",

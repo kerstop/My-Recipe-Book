@@ -18,6 +18,7 @@ const EditIngredient: React.FC<{
         amount: amountRef.current.valueAsNumber,
         unit: unitRef.current.value,
         name: nameRef.current.value,
+        orderBy: ingredient.orderBy,
       });
     }
   };
@@ -27,7 +28,7 @@ const EditIngredient: React.FC<{
         className="ingredient-amount-input"
         type="number"
         autoComplete="off"
-        defaultValue={ingredient.amount}
+        defaultValue={ingredient.amount ?? 0}
         ref={amountRef}
         onChange={onChange}
       />
@@ -147,7 +148,6 @@ const EditRecipe: React.FC = () => {
             book.recipes[recipeToUpdate] = recipe;
           }
           setBook({ ...book });
-          console.log(book.recipes);
           setEditing(false);
         }}
       />

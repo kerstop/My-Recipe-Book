@@ -59,7 +59,7 @@ const ImportDialog: React.FC = () => {
   const dialog_element = useRef<HTMLDialogElement | null>(null);
   const url_element = useRef<HTMLInputElement | null>(null);
   const { book, setRecipeId, setEditing, setBook } = useContext(GlobalState);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<null | string>(null);
   return (
     <>
       <input

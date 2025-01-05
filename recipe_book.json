@@ -1,0 +1,23 @@
+{
+  "properties": { "recipes": { "elements": { "ref": "recipe" } } },
+  "definitions": {
+    "recipe": {
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "instructions": { "type": "string" },
+        "ingredients": { "elements": { "ref": "ingredient" } },
+        "lastModified": { "type": "timestamp" }
+      }
+    },
+    "ingredient": {
+      "properties": {
+        "id": { "type": "string" },
+        "amount": { "type": "float32" },
+        "unit": { "type": "string" },
+        "name": { "type": "string" },
+        "orderBy": { "type": "int32" }
+      }
+    }
+  }
+}
